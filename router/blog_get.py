@@ -35,7 +35,7 @@ router = APIRouter(
 def all_blogs(
     page=1, 
     page_size:
-    Optional[int] = True,
+    Optional[int] = None,
     rec_parametr: dict = Depends(required_functionality)
     ):
     return {

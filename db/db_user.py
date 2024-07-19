@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from db.hash import Hash
 from db.models import DbUser
@@ -17,19 +18,35 @@ def create_user(db: Session, request: UserBase):
 
     return new_user
 
+
 # GET ALL USERS
 def all_users(db: Session):
     return db.query(DbUser).all()
 
+
  # GET USER BY ID
 def get_user(db: Session, id: int):
-    return db.query(DbUser).filter(DbUser.id == id).first()
+    # user = db.query(DbUser).filter(DbUser.id == id).first()
+    user = db.get(DbUser, id)
+
+    if not user:
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User with ID: {id} not found"
+            )
+    
+    return user
+
 
 # UPDATE USER
 def update_user(db: Session, id: int, request: UserBase):
     user = db.query(DbUser).filter(DbUser.id == id).first()
+
     if not user:
-        return None  # Or raise an exception
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User with ID: {id} not found"
+            )
 
     user.username = request.username
     user.email = request.email
@@ -44,8 +61,12 @@ def update_user(db: Session, id: int, request: UserBase):
 # UPDATE USER BY A REQUESTED VALUE
 def update_user_partial(db: Session, id: int, request: UserUpdate):
     user = db.query(DbUser).filter(DbUser.id == id).first()
+    
     if not user:
-        return None  # Or raise an exception
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User with ID: {id} not found"
+            )
 
     # Update only the fields that are provided in the request
     if request.username is not None:
@@ -64,8 +85,12 @@ def update_user_partial(db: Session, id: int, request: UserUpdate):
 # DELETE USER
 def delete_user(db: Session, id: int) -> bool:
     user = db.query(DbUser).filter(DbUser.id == id).first()
+    
     if not user:
-        return False  # Or raise an exception
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User with ID: {id} not found"
+            )
     
     db.delete(user)
     db.commit()
