@@ -42,18 +42,18 @@ def update_user(db: Session, id: int, request: UserBase):
 
 
 # UPDATE USER BY A REQUESTED VALUE
-def update_user_partial(db: Session, id: int, request: dict) -> DbUser:
+def update_user_partial(db: Session, id: int, request: UserUpdate):
     user = db.query(DbUser).filter(DbUser.id == id).first()
     if not user:
         return None  # Or raise an exception
 
     # Update only the fields that are provided in the request
-    if "username" in request:
-        user.username = request["username"]
-    if "email" in request:
-        user.email = request["email"]
-    if "password" in request:
-        user.password = Hash.bcrypt(request["password"])  # Hash the new password
+    if request.username is not None:
+        user.username = request.username
+    if request.email is not None:
+        user.email = request.email
+    if request.password is not None:
+        user.password = Hash.bcrypt(request.password)  # Hash the new password
 
     db.commit()
     db.refresh(user)

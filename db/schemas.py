@@ -9,10 +9,9 @@ class UserBase(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    username: Optional[str]
-    email: Optional[str]
-    password: Optional[str]
-    
+    username: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
 
 class UserDisplay(BaseModel):
     id: int

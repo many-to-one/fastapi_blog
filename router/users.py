@@ -49,7 +49,7 @@ def update_user(id: int, request: UserBase, db: Session = Depends(get_db)):
 # Partial update of user 
 @router.patch('/{id}')
 def patch_user(id: int, request: UserUpdate, db: Session = Depends(get_db)):
-    updated_user = db_user.patch_user(db, id, request)
+    updated_user = db_user.update_user_partial(db, id, request)
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found")
     return updated_user
