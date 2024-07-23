@@ -6,6 +6,7 @@ from db.database import get_db
 from db.schemas import ArticleBase, ArticleDisplay
 from db import db_article
 from fastapi.encoders import jsonable_encoder
+from auth.oauth2 import oauth2_scheme
 
 
 router = APIRouter(
@@ -22,7 +23,10 @@ def create_article(request: ArticleBase, db: Session=Depends(get_db)):
 
 # Get Article by ID
 @router.get('/all', response_model=List[ArticleDisplay])
-def get_all_articles(db: Session=Depends(get_db)):
+def get_all_articles(
+        db: Session=Depends(get_db),
+        token: str=Depends(oauth2_scheme)
+    ):
     return db_article.get_all_articles(db)
 
 
